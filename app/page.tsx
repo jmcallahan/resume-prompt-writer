@@ -37,12 +37,7 @@ ${resumeText}
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        setResult(data.error || 'Something went wrong.');
-      } else {
-        setResult(data.text || '');
-      }
+      setResult(res.ok ? (data.text || '') : (data.error || 'Something went wrong.'));
     } catch {
       setResult('Request failed.');
     } finally {
@@ -51,58 +46,73 @@ ${resumeText}
   }
 
   return (
-    <main className="min-h-screen p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Resume Prompt Writer</h1>
+    <main className="min-h-screen px-6 py-10">
+      <div className="mx-auto max-w-5xl rounded-xl border border-[var(--border)] bg-[var(--panel-2)] p-6 shadow-lg">
+        <h1 className="mb-2 text-3xl font-bold text-[var(--accent)]">
+          Resume Prompt Writer
+        </h1>
+        <p className="mb-6 text-[var(--muted)]">
+          Build a tailored resume prompt from a target role, job description, and your background.
+        </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-medium mb-1">Job Title</label>
-          <input
-            className="w-full border rounded p-3"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-            placeholder="SOC Analyst"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="mb-2 block font-medium text-[var(--accent-2)]">
+              Job Title
+            </label>
+            <input
+              className="w-full rounded-md px-3 py-3 outline-none"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder="SOC Analyst"
+            />
+          </div>
 
-        <div>
-          <label className="block font-medium mb-1">Job Description</label>
+          <div>
+            <label className="mb-2 block font-medium text-[var(--accent-2)]">
+              Job Description
+            </label>
+            <textarea
+              className="min-h-[180px] w-full rounded-md px-3 py-3 outline-none"
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Paste the job description here"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium text-[var(--accent-2)]">
+              Current Resume / Background
+            </label>
+            <textarea
+              className="min-h-[180px] w-full rounded-md px-3 py-3 outline-none"
+              value={resumeText}
+              onChange={(e) => setResumeText(e.target.value)}
+              placeholder="Paste your resume or background notes here"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-md px-5 py-3 font-semibold"
+          >
+            {loading ? 'Generating...' : 'Generate Resume Prompt'}
+          </button>
+        </form>
+
+        <section className="mt-8">
+          <h2 className="mb-3 text-2xl font-semibold text-[var(--warning)]">
+            Output
+          </h2>
           <textarea
-            className="w-full border rounded p-3 min-h-[180px]"
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste the job description here"
+            className="min-h-[240px] w-full rounded-md px-3 py-3 outline-none"
+            value={result}
+            readOnly
+            placeholder="Generated prompt will appear here"
           />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Current Resume / Background</label>
-          <textarea
-            className="w-full border rounded p-3 min-h-[180px]"
-            value={resumeText}
-            onChange={(e) => setResumeText(e.target.value)}
-            placeholder="Paste your current resume or background notes here"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-5 py-3 rounded bg-black text-white disabled:opacity-50"
-        >
-          {loading ? 'Generating...' : 'Generate Resume Prompt'}
-        </button>
-      </form>
-
-      <section className="mt-8">
-        <h2 className="text-2xl font-semibold mb-3">Output</h2>
-        <textarea
-          className="w-full border rounded p-3 min-h-[220px]"
-          value={result}
-          readOnly
-          placeholder="Generated prompt will appear here"
-        />
-      </section>
+        </section>
+      </div>
     </main>
   );
 }
